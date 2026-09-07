@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -17,6 +19,22 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val localProperties = Properties()
+        localProperties.load(
+            rootProject.file("local.properties").inputStream()
+        )
+
+        buildConfigField(
+            "String",
+            "WOO_CONSUMER_KEY",
+            "\"${localProperties.getProperty("woo_consumer_key", "")}\""
+        )
+
+        buildConfigField(
+            "String",
+            "WOO_CONSUMER_SECRET",
+            "\"${localProperties.getProperty("woo_consumer_secret", "")}\""
+        )
     }
 
     buildTypes {
@@ -32,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -46,6 +65,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:5.4.0")
     implementation("com.google.dagger:hilt-android:2.59.2")
     ksp("com.google.dagger:hilt-android-compiler:2.59.2")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
