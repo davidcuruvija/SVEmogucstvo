@@ -18,11 +18,12 @@ class ProductDetailsViewModel @Inject constructor(private val repository : Produ
 
     val uiState : StateFlow<ProductDetailsUiState> = _uiState.asStateFlow()
 
-    fun loadProduct(product : ProductDto) {
+    fun loadProduct(productId : Int) {
         viewModelScope.launch {
             try {
-                val variations = repository.getProductVariations(product.id)
-
+                val product = repository.getProducts()
+                    .first { it.id == productId }
+                val variations = repository.getProductVariations(productId)
                 _uiState.value = ProductDetailsUiState.Success(
                     product = product,
                     variations = variations

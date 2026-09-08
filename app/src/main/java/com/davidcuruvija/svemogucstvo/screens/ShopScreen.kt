@@ -9,9 +9,10 @@ import com.davidcuruvija.svemogucstvo.viewmodel.ProductViewModel
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import com.davidcuruvija.svemogucstvo.model.ProductDto
 
 @Composable
-fun ShopScreen(viewModel : ProductViewModel = hiltViewModel()) {
+fun ShopScreen(onProductClick: (ProductDto) -> Unit, viewModel : ProductViewModel = hiltViewModel()) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState.value) {
@@ -25,7 +26,7 @@ fun ShopScreen(viewModel : ProductViewModel = hiltViewModel()) {
                     ProductCard(
                         product = product,
                         onClick = {
-                            // TODO
+                            onProductClick(product)
                         }
                     )
                 }
