@@ -6,16 +6,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidcuruvija.svemogucstvo.viewmodel.ProductUiState
 import com.davidcuruvija.svemogucstvo.viewmodel.ProductViewModel
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 
 @Composable
-fun ShopScreen(viewModel: ProductViewModel = hiltViewModel()) {
+fun ShopScreen(viewModel : ProductViewModel = hiltViewModel()) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState.value) {
@@ -24,16 +20,14 @@ fun ShopScreen(viewModel: ProductViewModel = hiltViewModel()) {
         }
 
         is ProductUiState.Success -> {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                state.products.forEach { product ->
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        AsyncImage(
-                            model = product.images.firstOrNull()?.src,
-                            contentDescription = product.name
-                        )
-                        Text(text = product.name)
-                        Text(text = product.price)
-                    }
+            LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                items(state.products) { product ->
+                    ProductCard(
+                        product = product,
+                        onClick = {
+                            // TODO
+                        }
+                    )
                 }
             }
         }
