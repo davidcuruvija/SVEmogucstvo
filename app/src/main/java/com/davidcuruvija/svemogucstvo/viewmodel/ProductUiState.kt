@@ -3,7 +3,6 @@ package com.davidcuruvija.svemogucstvo.viewmodel
 import com.davidcuruvija.svemogucstvo.model.ProductDto
 
 sealed interface ProductUiState {
-
     data object Loading : ProductUiState
 
     data class Success(
