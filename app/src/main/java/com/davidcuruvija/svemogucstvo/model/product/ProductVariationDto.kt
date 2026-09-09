@@ -1,4 +1,4 @@
-package com.davidcuruvija.svemogucstvo.model
+package com.davidcuruvija.svemogucstvo.model.product
 
 data class ProductVariationDto(
     val id : Int,

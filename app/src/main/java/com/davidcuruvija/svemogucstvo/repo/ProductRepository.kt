@@ -1,8 +1,8 @@
 package com.davidcuruvija.svemogucstvo.repo
 
 import com.davidcuruvija.svemogucstvo.data.remote.WooCommerceApi
-import com.davidcuruvija.svemogucstvo.model.ProductDto
-import com.davidcuruvija.svemogucstvo.model.ProductVariationDto
+import com.davidcuruvija.svemogucstvo.model.product.ProductDto
+import com.davidcuruvija.svemogucstvo.model.product.ProductVariationDto
 import javax.inject.Inject
 
 class ProductRepository @Inject constructor(private val api : WooCommerceApi) {

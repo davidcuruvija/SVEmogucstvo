@@ -1,4 +1,4 @@
-package com.davidcuruvija.svemogucstvo.screens
+package com.davidcuruvija.svemogucstvo.screens.product
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.davidcuruvija.svemogucstvo.model.ProductDto
+import com.davidcuruvija.svemogucstvo.model.product.ProductDto
 
 @Composable
 fun ProductCard(product : ProductDto, onClick : () -> Unit) {

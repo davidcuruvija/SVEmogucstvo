@@ -1,7 +1,7 @@
 package com.davidcuruvija.svemogucstvo.viewmodel
 
-import com.davidcuruvija.svemogucstvo.model.ProductDto
-import com.davidcuruvija.svemogucstvo.model.ProductVariationDto
+import com.davidcuruvija.svemogucstvo.model.product.ProductDto
+import com.davidcuruvija.svemogucstvo.model.product.ProductVariationDto
 
 sealed interface ProductDetailsUiState {
     data object Loading : ProductDetailsUiState

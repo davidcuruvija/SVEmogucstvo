@@ -1,4 +1,4 @@
-package com.davidcuruvija.svemogucstvo.screens
+package com.davidcuruvija.svemogucstvo.screens.product
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,11 +49,18 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
+import com.davidcuruvija.svemogucstvo.model.cart.CartItem
 import com.davidcuruvija.svemogucstvo.util.formatPrice
+import com.davidcuruvija.svemogucstvo.viewmodel.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = hiltViewModel()) {
+fun ProductDetailsScreen(
+    productId : Int,
+    cartViewModel : CartViewModel,
+    onAddToCart: () -> Unit,
+    viewModel : ProductDetailsViewModel = hiltViewModel()
+) {
     var selectedColor by remember { mutableStateOf<String?>(null) }
     var selectedSize by remember { mutableStateOf<String?>(null) }
     var quantity by remember { mutableStateOf(1) }
@@ -88,12 +95,33 @@ fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = 
                 .distinct()
 
             val selectedVariation = state.variations.firstOrNull { variation ->
-                variation.attributes.any {
-                    it.name == "color" && it.option.trim('"') == selectedColor
-                } &&
-                        variation.attributes.any {
-                            it.name == "size" && it.option.trim('"') == selectedSize
-                        }
+
+                val variationColor = variation.attributes
+                    .firstOrNull {
+                        it.name.equals("color", ignoreCase = true)
+                    }
+                    ?.option
+                    ?.trim()
+                    ?.trim('"')
+
+                val variationSize = variation.attributes
+                    .firstOrNull {
+                        it.name.equals("size", ignoreCase = true)
+                    }
+                    ?.option
+                    ?.trim()
+                    ?.trim('"')
+
+                val cleanSelectedColor = selectedColor
+                    ?.trim()
+                    ?.trim('"')
+
+                val cleanSelectedSize = selectedSize
+                    ?.trim()
+                    ?.trim('"')
+
+                variationColor.equals(cleanSelectedColor, ignoreCase = true) &&
+                        variationSize.equals(cleanSelectedSize, ignoreCase = true)
             }
 
             Column(
@@ -210,7 +238,22 @@ fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = 
 
                     Button(
                         onClick = {
-                            // Cart logic will go here
+                            selectedVariation?.let { variation ->
+                                cartViewModel.addItem(
+                                    CartItem(
+                                        variationId = variation.id,
+                                        productId = state.product.id,
+                                        productName = state.product.name,
+                                        imageUrl = variation.image?.src
+                                            ?: state.product.images.firstOrNull()?.src,
+                                        color = selectedColor,
+                                        size = selectedSize,
+                                        price = variation.price,
+                                        quantity = quantity
+                                    )
+                                )
+                                onAddToCart()
+                            }
                         },
                         enabled = selectedVariation != null,
                         shape = RectangleShape,

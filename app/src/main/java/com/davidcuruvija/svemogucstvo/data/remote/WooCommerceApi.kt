@@ -1,7 +1,7 @@
 package com.davidcuruvija.svemogucstvo.data.remote
 
-import com.davidcuruvija.svemogucstvo.model.ProductDto
-import com.davidcuruvija.svemogucstvo.model.ProductVariationDto
+import com.davidcuruvija.svemogucstvo.model.product.ProductDto
+import com.davidcuruvija.svemogucstvo.model.product.ProductVariationDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 

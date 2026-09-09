@@ -2,7 +2,6 @@ package com.davidcuruvija.svemogucstvo.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidcuruvija.svemogucstvo.model.ProductDto
 import com.davidcuruvija.svemogucstvo.repo.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

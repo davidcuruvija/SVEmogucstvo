@@ -9,7 +9,8 @@ import com.davidcuruvija.svemogucstvo.viewmodel.ProductViewModel
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import com.davidcuruvija.svemogucstvo.model.ProductDto
+import com.davidcuruvija.svemogucstvo.model.product.ProductDto
+import com.davidcuruvija.svemogucstvo.screens.product.ProductCard
 
 @Composable
 fun ShopScreen(onProductClick: (ProductDto) -> Unit, viewModel : ProductViewModel = hiltViewModel()) {
