@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.davidcuruvija.svemogucstvo.screens.cart.CartScreen
 import com.davidcuruvija.svemogucstvo.screens.product.ProductDetailsScreen
 import com.davidcuruvija.svemogucstvo.screens.ShopScreen
-import com.davidcuruvija.svemogucstvo.viewmodel.CartViewModel
+import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

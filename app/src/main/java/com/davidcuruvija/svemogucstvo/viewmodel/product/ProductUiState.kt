@@ -1,4 +1,4 @@
-package com.davidcuruvija.svemogucstvo.viewmodel
+package com.davidcuruvija.svemogucstvo.viewmodel.product
 
 import com.davidcuruvija.svemogucstvo.model.product.ProductDto
 

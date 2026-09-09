@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.davidcuruvija.svemogucstvo.viewmodel.ProductDetailsUiState
-import com.davidcuruvija.svemogucstvo.viewmodel.ProductDetailsViewModel
+import com.davidcuruvija.svemogucstvo.viewmodel.product.ProductDetailsUiState
+import com.davidcuruvija.svemogucstvo.viewmodel.product.ProductDetailsViewModel
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -51,7 +51,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import com.davidcuruvija.svemogucstvo.model.cart.CartItem
 import com.davidcuruvija.svemogucstvo.util.formatPrice
-import com.davidcuruvija.svemogucstvo.viewmodel.CartViewModel
+import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

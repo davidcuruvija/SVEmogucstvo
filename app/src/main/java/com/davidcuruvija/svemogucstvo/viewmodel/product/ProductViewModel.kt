@@ -1,4 +1,4 @@
-package com.davidcuruvija.svemogucstvo.viewmodel
+package com.davidcuruvija.svemogucstvo.viewmodel.product
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
