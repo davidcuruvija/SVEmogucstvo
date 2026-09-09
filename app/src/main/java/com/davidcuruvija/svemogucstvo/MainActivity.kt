@@ -29,7 +29,11 @@ class MainActivity : ComponentActivity() {
                     ShopScreen(
                         onProductClick = { product ->
                             navController.navigate("product/${product.id}")
-                        }
+                        },
+                        onCartClick = {
+                            navController.navigate("cart")
+                        },
+                        cartViewModel = cartViewModel
                     )
                 }
                 composable("cart") {

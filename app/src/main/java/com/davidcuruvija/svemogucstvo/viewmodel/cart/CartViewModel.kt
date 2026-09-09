@@ -13,6 +13,15 @@ import kotlinx.coroutines.flow.stateIn
 class CartViewModel : ViewModel() {
     private val _items = MutableStateFlow<List<CartItem>>(emptyList())
     val items: StateFlow<List<CartItem>> = _items.asStateFlow()
+    val itemCount: StateFlow<Int> = _items
+        .map { items ->
+            items.sumOf { it.quantity }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = 0
+        )
     val total: StateFlow<Long> = _items
         .map { items ->
             items.sumOf { item ->
@@ -24,7 +33,8 @@ class CartViewModel : ViewModel() {
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = 0L
         )
-    fun addItem(item: CartItem) {
+
+    fun addItem(item : CartItem) {
         val existingItem = _items.value.find {
             it.variationId == item.variationId
         }
@@ -44,7 +54,7 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun increaseQuantity(variationId: Int) {
+    fun increaseQuantity(variationId : Int) {
         _items.value = _items.value.map { item ->
             if (item.variationId == variationId) {
                 item.copy(quantity = item.quantity + 1)
@@ -54,7 +64,7 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun decreaseQuantity(variationId: Int) {
+    fun decreaseQuantity(variationId : Int) {
         _items.value = _items.value.mapNotNull { item ->
             if (item.variationId == variationId) {
                 if (item.quantity > 1) {
@@ -68,7 +78,7 @@ class CartViewModel : ViewModel() {
         }
     }
 
-    fun removeItem(variationId: Int) {
+    fun removeItem(variationId : Int) {
         _items.value = _items.value.filter {
             it.variationId != variationId
         }
