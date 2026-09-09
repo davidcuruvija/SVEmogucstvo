@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -33,7 +34,11 @@ import com.davidcuruvija.svemogucstvo.util.formatPrice
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
 
 @Composable
-fun CartScreen(cartViewModel : CartViewModel) {
+fun CartScreen(
+    cartViewModel : CartViewModel,
+    onContinueShopping : () -> Unit,
+    onCheckout : () -> Unit
+) {
     val items by cartViewModel.items.collectAsStateWithLifecycle()
     val total by cartViewModel.total.collectAsStateWithLifecycle()
 
@@ -52,32 +57,65 @@ fun CartScreen(cartViewModel : CartViewModel) {
         Spacer(modifier = Modifier.height(24.dp))
 
         if (items.isEmpty()) {
-            Text("Your cart is empty.")
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Your cart is empty.",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = onContinueShopping
+                ) {
+                    Text("CONTINUE SHOPPING")
+                }
+            }
         } else {
             items.forEach { item ->
                 CartItemRow(
                     item = item,
                     cartViewModel = cartViewModel
                 )
+
+                HorizontalDivider()
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Total: ${formatPrice(total.toString())}",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = onCheckout
+            ) {
+                Text("CHECKOUT")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            TextButton(
+                onClick = onContinueShopping
+            ) {
+                Text("CONTINUE SHOPPING")
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        HorizontalDivider()
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Total: ${formatPrice(total.toString())}",
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
-        )
     }
 }
 
 @Composable
-fun CartItemRow(item : CartItem, cartViewModel : CartViewModel) {
+private fun CartItemRow(
+    item : CartItem,
+    cartViewModel : CartViewModel
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,6 +140,9 @@ fun CartItemRow(item : CartItem, cartViewModel : CartViewModel) {
 
         Text(text = "Color: ${item.color ?: "N/A"}")
         Text(text = "Size: ${item.size ?: "N/A"}")
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -121,7 +162,7 @@ fun CartItemRow(item : CartItem, cartViewModel : CartViewModel) {
                     .border(1.dp, Color.LightGray),
                 contentAlignment = Alignment.Center
             ) {
-                Text(item.quantity.toString())
+                Text(text = item.quantity.toString())
             }
 
             OutlinedButton(
@@ -134,6 +175,7 @@ fun CartItemRow(item : CartItem, cartViewModel : CartViewModel) {
                 Text("+")
             }
         }
+
         TextButton(
             onClick = {
                 cartViewModel.removeItem(item.variationId)
@@ -141,7 +183,9 @@ fun CartItemRow(item : CartItem, cartViewModel : CartViewModel) {
         ) {
             Text("REMOVE")
         }
+
         Text(text = "Price: ${formatPrice(item.price)} × ${item.quantity}")
+
         Text(
             text = "Total: ${
                 formatPrice(
