@@ -37,15 +37,19 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
+import com.davidcuruvija.svemogucstvo.util.formatPrice
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +75,7 @@ fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = 
                 .flatMap { variation ->
                     variation.attributes
                         .filter { it.name == "color" }
-                        .map { it.option }
+                        .map { it.option.trim('"') }
                 }
                 .distinct()
 
@@ -79,17 +83,25 @@ fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = 
                 .flatMap { variation ->
                     variation.attributes
                         .filter { it.name == "size" }
-                        .map { it.option }
+                        .map { it.option.trim('"') }
                 }
                 .distinct()
+
             val selectedVariation = state.variations.firstOrNull { variation ->
                 variation.attributes.any {
-                    it.name == "color" && it.option == selectedColor
-                } && variation.attributes.any {
-                    it.name == "size" && it.option == selectedSize
-                }
+                    it.name == "color" && it.option.trim('"') == selectedColor
+                } &&
+                        variation.attributes.any {
+                            it.name == "size" && it.option.trim('"') == selectedSize
+                        }
             }
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 16.dp)
+            ) {
                 AsyncImage(
                     model = state.product.images.firstOrNull()?.src,
                     contentDescription = state.product.name,
@@ -98,8 +110,23 @@ fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = 
                         .height(400.dp),
                     contentScale = ContentScale.Fit
                 )
-                Text(text = state.product.name)
-                Text(text = state.product.price)
+                Text(
+                    text = state.product.name,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(
+                        top = 16.dp,
+                        bottom = 8.dp
+                    )
+                )
+                Text(
+                    text = formatPrice(
+                        selectedVariation?.price ?: state.product.price
+                    ),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
                 AndroidView(
                     factory = { context ->
                         TextView(context)
@@ -110,7 +137,9 @@ fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = 
                             Html.FROM_HTML_MODE_LEGACY
                         )
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp)
                 )
 
                 ProductAttributeDropdown(
@@ -278,7 +307,9 @@ fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = 
                                     )
 
                                     Text(
-                                        text = attribute.options.joinToString(", "),
+                                        text = attribute.options
+                                            .map { it.trim('"') }
+                                            .joinToString(", "),
                                         modifier = Modifier.weight(0.7f)
                                     )
                                 }
