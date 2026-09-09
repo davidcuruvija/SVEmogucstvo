@@ -41,7 +41,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.ui.graphics.RectangleShape
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +53,8 @@ fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = 
     var selectedColor by remember { mutableStateOf<String?>(null) }
     var selectedSize by remember { mutableStateOf<String?>(null) }
     var quantity by remember { mutableStateOf(1) }
+    var selectedTab by remember { mutableStateOf(0) }
+
     LaunchedEffect(productId) {
         viewModel.loadProduct(productId)
     }
@@ -185,6 +190,106 @@ fun ProductDetailsScreen(productId : Int, viewModel : ProductDetailsViewModel = 
                         Text("ADD TO CART")
                     }
                 }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                HorizontalDivider()
+
+                Text(
+                    text = "SKU: ${state.product.sku.ifEmpty { "N/A" }}",
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+
+                HorizontalDivider()
+
+                Text(
+                    text = "Categories: ${
+                        state.product.categories.joinToString(", ") { it.name }
+                    }",
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+
+                HorizontalDivider()
+
+                Text(
+                    text = "Tags: ${
+                        state.product.tags.joinToString(", ") { it.name }
+                    }",
+                    modifier = Modifier.padding(vertical = 12.dp)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                PrimaryTabRow(
+                    selectedTabIndex = selectedTab
+                ) {
+                    Tab(
+                        selected = selectedTab == 0,
+                        onClick = {
+                            selectedTab = 0
+                        },
+                        text = {
+                            Text("DESCRIPTION")
+                        }
+                    )
+
+                    Tab(
+                        selected = selectedTab == 1,
+                        onClick = {
+                            selectedTab = 1
+                        },
+                        text = {
+                            Text("ADDITIONAL INFORMATION")
+                        }
+                    )
+                }
+
+                when (selectedTab) {
+                    0 -> {
+                        AndroidView(
+                            factory = { context ->
+                                TextView(context)
+                            },
+                            update = { textView ->
+                                textView.text = Html.fromHtml(
+                                    state.product.description,
+                                    Html.FROM_HTML_MODE_LEGACY
+                                )
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp)
+                        )
+                    }
+
+                    1 -> {
+                        Column(
+                            modifier = Modifier.padding(vertical = 16.dp)
+                        ) {
+                            state.product.attributes.forEach { attribute ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp)
+                                ) {
+                                    Text(
+                                        text = attribute.name.uppercase(),
+                                        modifier = Modifier.weight(0.3f)
+                                    )
+
+                                    Text(
+                                        text = attribute.options.joinToString(", "),
+                                        modifier = Modifier.weight(0.7f)
+                                    )
+                                }
+
+                                HorizontalDivider()
+                            }
+                        }
+                    }
+                }
+
+                HorizontalDivider()
 
                 selectedVariation?.let { variation ->
                     Text(text = "Variation ID: ${variation.id}")
