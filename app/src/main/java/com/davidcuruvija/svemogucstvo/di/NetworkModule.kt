@@ -2,6 +2,7 @@ package com.davidcuruvija.svemogucstvo.di
 
 import com.davidcuruvija.svemogucstvo.BuildConfig
 import com.davidcuruvija.svemogucstvo.data.remote.WooCommerceApi
+import com.davidcuruvija.svemogucstvo.data.remote.WooCommerceStoreApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,6 +31,13 @@ object NetworkModule {
     @Singleton
     fun provideWooCommerceApi(retrofit : Retrofit) : WooCommerceApi {
         return retrofit.create(WooCommerceApi::class.java)
+    }
+    @Provides
+    @Singleton
+    fun provideWooCommerceStoreApi(
+        retrofit : Retrofit
+    ) : WooCommerceStoreApi {
+        return retrofit.create(WooCommerceStoreApi::class.java)
     }
     @Provides
     @Singleton

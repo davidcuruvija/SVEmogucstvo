@@ -1,5 +1,6 @@
 package com.davidcuruvija.svemogucstvo.viewmodel.cart
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.davidcuruvija.svemogucstvo.model.cart.CartItem
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,9 +10,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import androidx.lifecycle.viewModelScope
+import com.davidcuruvija.svemogucstvo.repo.CartRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CartViewModel : ViewModel() {
-
+@HiltViewModel
+class CartViewModel @Inject constructor(private val cartRepository : CartRepository) : ViewModel() {
     private val _items = MutableStateFlow<List<CartItem>>(emptyList())
 
     val items : StateFlow<List<CartItem>> = _items.asStateFlow()
@@ -89,6 +94,25 @@ class CartViewModel : ViewModel() {
     fun removeItem(variationId : Int) {
         _items.value = _items.value.filter {
             it.variationId != variationId
+        }
+    }
+
+    fun testStoreCart() {
+        viewModelScope.launch {
+            try {
+                val cart = cartRepository.getCart()
+
+                Log.d(
+                    "StoreCart",
+                    "Items: ${cart.items_count}, Total: ${cart.totals.total_price}"
+                )
+            } catch (e : Exception) {
+                Log.e(
+                    "StoreCart",
+                    "Failed to load cart",
+                    e
+                )
+            }
         }
     }
 }
