@@ -1,6 +1,7 @@
 package com.davidcuruvija.svemogucstvo.model.cart
 
 data class CartItem(
+    val key : String,
     val variationId : Int,
     val productId : Int,
     val productName : String,

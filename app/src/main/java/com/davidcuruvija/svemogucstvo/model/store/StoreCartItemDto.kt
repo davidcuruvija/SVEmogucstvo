@@ -5,5 +5,7 @@ data class StoreCartItemDto(
     val id : Int,
     val name : String,
     val quantity : Int,
-    val prices : StoreCartItemPricesDto
+    val prices : StoreCartItemPricesDto,
+    val images : List<StoreCartItemImageDto>,
+    val variation : List<StoreCartItemVariationDto>
 )

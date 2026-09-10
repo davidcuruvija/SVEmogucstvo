@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import androidx.lifecycle.viewModelScope
 import com.davidcuruvija.svemogucstvo.repo.CartRepository
+import com.davidcuruvija.svemogucstvo.model.store.StoreCartItemDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,8 +19,21 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(private val cartRepository : CartRepository) : ViewModel() {
     private val _items = MutableStateFlow<List<CartItem>>(emptyList())
-
     val items : StateFlow<List<CartItem>> = _items.asStateFlow()
+
+    init {
+        loadCart()
+    }
+
+    private fun loadCart() {
+        viewModelScope.launch {
+            try {
+                _items.value = cartRepository.getCartItems()
+            } catch (e: Exception) {
+                _items.value = emptyList()
+            }
+        }
+    }
 
     val itemCount : StateFlow<Int> = _items
         .map { items ->
@@ -44,56 +58,119 @@ class CartViewModel @Inject constructor(private val cartRepository : CartReposit
         )
 
     fun addItem(item : CartItem) {
-        val existingItem = _items.value.find {
-            it.variationId == item.variationId
-        }
+        val currentItems = _items.value
+        val existingItem = currentItems.find { it.variationId == item.variationId }
 
         if (existingItem != null) {
-            _items.value = _items.value.map {
+            _items.value = currentItems.map {
                 if (it.variationId == item.variationId) {
-                    it.copy(
-                        quantity = it.quantity + item.quantity
-                    )
+                    it.copy(quantity = it.quantity + item.quantity)
                 } else {
                     it
                 }
             }
         } else {
-            _items.value += item
+            _items.value = currentItems + item
         }
-    }
 
-    fun increaseQuantity(variationId : Int) {
-        _items.value = _items.value.map { item ->
-            if (item.variationId == variationId) {
-                item.copy(
-                    quantity = item.quantity + 1
+        viewModelScope.launch {
+            try {
+                val cart = cartRepository.addItem(
+                    variationId = item.variationId,
+                    quantity = item.quantity
                 )
-            } else {
-                item
+                _items.value = cart.items.map { it.toCartItem() }
+            } catch (e : Exception) {
+                _items.value = currentItems
+                Log.e(
+                    "CartViewModel",
+                    "Failed to add item to cart",
+                    e
+                )
             }
         }
     }
 
-    fun decreaseQuantity(variationId : Int) {
-        _items.value = _items.value.mapNotNull { item ->
-            if (item.variationId == variationId) {
-                if (item.quantity > 1) {
-                    item.copy(
-                        quantity = item.quantity - 1
-                    )
-                } else {
-                    null
-                }
-            } else {
-                item
+    fun increaseQuantity(key : String) {
+        val item = _items.value.find { it.key == key } ?: return
+        val newQuantity = item.quantity + 1
+        val currentItems = _items.value
+
+        _items.value = currentItems.map {
+            if (it.key == key) it.copy(quantity = newQuantity) else it
+        }
+
+        viewModelScope.launch {
+            try {
+                val cart = cartRepository.updateItemQuantity(key, newQuantity)
+                _items.value = cart.items.map { it.toCartItem() }
+            } catch (e : Exception) {
+                _items.value = currentItems
             }
         }
     }
 
-    fun removeItem(variationId : Int) {
-        _items.value = _items.value.filter {
-            it.variationId != variationId
+    fun decreaseQuantity(key : String) {
+        val item = _items.value.find { it.key == key } ?: return
+        if (item.quantity <= 1) {
+            removeItem(key)
+            return
         }
+
+        val newQuantity = item.quantity - 1
+        val currentItems = _items.value
+
+        _items.value = currentItems.map {
+            if (it.key == key) it.copy(quantity = newQuantity) else it
+        }
+
+        viewModelScope.launch {
+            try {
+                val cart = cartRepository.updateItemQuantity(key, newQuantity)
+                _items.value = cart.items.map { it.toCartItem() }
+            } catch (e : Exception) {
+                _items.value = currentItems
+            }
+        }
+    }
+
+    fun removeItem(key : String) {
+        val currentItems = _items.value
+        _items.value = currentItems.filter { it.key != key }
+
+        viewModelScope.launch {
+            try {
+                val cart = cartRepository.removeItem(key)
+                _items.value = cart.items.map { it.toCartItem() }
+            } catch (e : Exception) {
+                _items.value = currentItems
+            }
+        }
+    }
+
+    private fun StoreCartItemDto.toCartItem() : CartItem {
+        val color = this.variation
+            .firstOrNull { it.attribute.equals("color", ignoreCase = true) }
+            ?.value
+            ?.let { android.text.Html.fromHtml(it, android.text.Html.FROM_HTML_MODE_LEGACY).toString() }
+            ?.trim()?.trim('"', '“', '”')
+
+        val size = this.variation
+            .firstOrNull { it.attribute.equals("size", ignoreCase = true) }
+            ?.value
+            ?.let { android.text.Html.fromHtml(it, android.text.Html.FROM_HTML_MODE_LEGACY).toString() }
+            ?.trim()?.trim('"', '“', '”')
+
+        return CartItem(
+            key = this.key,
+            variationId = this.id,
+            productId = 0,
+            productName = this.name,
+            imageUrl = this.images.firstOrNull()?.src,
+            color = color,
+            size = size,
+            price = this.prices.price,
+            quantity = this.quantity
+        )
     }
 }

@@ -241,6 +241,7 @@ fun ProductDetailsScreen(
                             selectedVariation?.let { variation ->
                                 cartViewModel.addItem(
                                     CartItem(
+                                        key = "",
                                         variationId = variation.id,
                                         productId = state.product.id,
                                         productName = state.product.name,

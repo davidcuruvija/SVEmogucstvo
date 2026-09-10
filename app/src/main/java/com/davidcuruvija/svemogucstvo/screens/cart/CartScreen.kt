@@ -148,7 +148,7 @@ private fun CartItemRow(
         ) {
             OutlinedButton(
                 onClick = {
-                    cartViewModel.decreaseQuantity(item.variationId)
+                    cartViewModel.decreaseQuantity(item.key)
                 },
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier.size(48.dp)
@@ -167,7 +167,7 @@ private fun CartItemRow(
 
             OutlinedButton(
                 onClick = {
-                    cartViewModel.increaseQuantity(item.variationId)
+                    cartViewModel.increaseQuantity(item.key)
                 },
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier.size(48.dp)
@@ -178,7 +178,7 @@ private fun CartItemRow(
 
         TextButton(
             onClick = {
-                cartViewModel.removeItem(item.variationId)
+                cartViewModel.removeItem(item.key)
             }
         ) {
             Text("REMOVE")
