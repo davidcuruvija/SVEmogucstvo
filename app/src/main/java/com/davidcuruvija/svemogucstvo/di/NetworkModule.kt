@@ -54,11 +54,14 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request()
-                    .newBuilder()
-                    .header("Authorization", credentials)
-                    .build()
+                val builder = request.newBuilder()
+                if (!request.url.encodedPath.contains("wp-json/wc/store")) {
+                    builder.header("Authorization", credentials)
+                }
 
-                chain.proceed(request)
+                builder.header("User-Agent", "SveMogucstvo-AndroidApp")
+
+                chain.proceed(builder.build())
             }
             .addInterceptor(loggingInterceptor)
             .build()

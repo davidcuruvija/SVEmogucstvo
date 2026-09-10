@@ -22,9 +22,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val cartViewModel: CartViewModel = viewModel()
-            LaunchedEffect(Unit) {
-                cartViewModel.testStoreCart()
-            }
             val navController = rememberNavController()
             NavHost(
                 navController = navController,

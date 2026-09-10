@@ -96,23 +96,4 @@ class CartViewModel @Inject constructor(private val cartRepository : CartReposit
             it.variationId != variationId
         }
     }
-
-    fun testStoreCart() {
-        viewModelScope.launch {
-            try {
-                val cart = cartRepository.getCart()
-
-                Log.d(
-                    "StoreCart",
-                    "Items: ${cart.items_count}, Total: ${cart.totals.total_price}"
-                )
-            } catch (e : Exception) {
-                Log.e(
-                    "StoreCart",
-                    "Failed to load cart",
-                    e
-                )
-            }
-        }
-    }
 }
