@@ -12,7 +12,10 @@ import com.davidcuruvija.svemogucstvo.screens.cart.CartScreen
 import com.davidcuruvija.svemogucstvo.screens.product.ProductDetailsScreen
 import com.davidcuruvija.svemogucstvo.screens.ShopScreen
 import com.davidcuruvija.svemogucstvo.screens.checkout.CheckoutScreen
+import com.davidcuruvija.svemogucstvo.screens.checkout.OrderConfirmationScreen
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -54,6 +57,26 @@ class MainActivity : ComponentActivity() {
                         cartViewModel = cartViewModel,
                         onReturnToCart = {
                             navController.popBackStack()
+                        },
+                        onOrderPlaced = { orderId ->
+                            navController.navigate("order_confirmation/$orderId") {
+                                popUpTo("shop")
+                            }
+                        }
+                    )
+                }
+                composable(
+                    route = "order_confirmation/{orderId}",
+                    arguments = listOf(navArgument("orderId") { type = NavType.IntType })
+                ) { backStackEntry ->
+                    val orderId = backStackEntry.arguments?.getInt("orderId") ?: 0
+
+                    OrderConfirmationScreen(
+                        orderId = orderId,
+                        onContinueShopping = {
+                            navController.navigate("shop") {
+                                popUpTo("shop") { inclusive = true }
+                            }
                         }
                     )
                 }

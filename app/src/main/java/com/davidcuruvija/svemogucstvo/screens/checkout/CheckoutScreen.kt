@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +18,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidcuruvija.svemogucstvo.util.formatPrice
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
+import com.davidcuruvija.svemogucstvo.viewmodel.cart.CheckoutState
 import com.davidcuruvija.svemogucstvo.util.isValidAddress
 import com.davidcuruvija.svemogucstvo.util.isValidCity
 import com.davidcuruvija.svemogucstvo.util.isValidEmail
@@ -38,10 +41,20 @@ import com.davidcuruvija.svemogucstvo.util.isValidPostalCode
 @Composable
 fun CheckoutScreen(
     cartViewModel : CartViewModel,
-    onReturnToCart : () -> Unit
+    onReturnToCart : () -> Unit,
+    onOrderPlaced : (Int) -> Unit
 ) {
     val items by cartViewModel.items.collectAsStateWithLifecycle()
     val subtotal by cartViewModel.total.collectAsStateWithLifecycle()
+    val checkoutState by cartViewModel.checkoutState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(checkoutState) {
+        val state = checkoutState
+        if (state is CheckoutState.Success) {
+            onOrderPlaced(state.orderId)
+            cartViewModel.resetCheckoutState()
+        }
+    }
 
     val shipping = 500L
     val total : Long = subtotal + shipping
@@ -488,6 +501,16 @@ fun CheckoutScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        if (checkoutState is CheckoutState.Error) {
+            Text(
+                text = (checkoutState as CheckoutState.Error).message,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
         Button(
             onClick = {
                 emailError = null
@@ -535,12 +558,30 @@ fun CheckoutScreen(
                 }
 
                 if (isValid) {
-                    // TODO
+                    cartViewModel.placeOrder(
+                        email = email,
+                        firstName = firstName,
+                        lastName = lastName,
+                        address = address,
+                        apartment = apartment,
+                        city = city,
+                        postalCode = postalCode,
+                        phone = phone,
+                        customerNote = if (addOrderNote) orderNote else ""
+                    )
                 }
             },
+            enabled = checkoutState !is CheckoutState.Loading,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("PLACE ORDER")
+            if (checkoutState is CheckoutState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.height(20.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text("PLACE ORDER")
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
