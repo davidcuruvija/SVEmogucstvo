@@ -26,7 +26,7 @@ class CartViewModel : ViewModel() {
             initialValue = 0
         )
 
-    val subtotal : StateFlow<Long> = _items
+    val total : StateFlow<Long> = _items
         .map { items ->
             items.sumOf { item ->
                 (item.price.toLongOrNull() ?: 0L) * item.quantity
@@ -36,18 +36,6 @@ class CartViewModel : ViewModel() {
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = 0L
-        )
-
-    val shipping : Long = 500L
-
-    val total : StateFlow<Long> = subtotal
-        .map { subtotal ->
-            subtotal + shipping
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = shipping
         )
 
     fun addItem(item : CartItem) {

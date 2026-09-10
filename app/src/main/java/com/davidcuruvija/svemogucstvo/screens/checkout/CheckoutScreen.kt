@@ -28,6 +28,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidcuruvija.svemogucstvo.util.formatPrice
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
+import com.davidcuruvija.svemogucstvo.util.isValidAddress
+import com.davidcuruvija.svemogucstvo.util.isValidCity
+import com.davidcuruvija.svemogucstvo.util.isValidEmail
+import com.davidcuruvija.svemogucstvo.util.isValidName
+import com.davidcuruvija.svemogucstvo.util.isValidPhone
+import com.davidcuruvija.svemogucstvo.util.isValidPostalCode
 
 @Composable
 fun CheckoutScreen(
@@ -51,6 +57,13 @@ fun CheckoutScreen(
     var sameBillingAddress by remember { mutableStateOf(true) }
     var addOrderNote by remember { mutableStateOf(false) }
     var orderNote by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var firstNameError by remember { mutableStateOf<String?>(null) }
+    var lastNameError by remember { mutableStateOf<String?>(null) }
+    var addressError by remember { mutableStateOf<String?>(null) }
+    var cityError by remember { mutableStateOf<String?>(null) }
+    var postalCodeError by remember { mutableStateOf<String?>(null) }
+    var phoneError by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -81,13 +94,25 @@ fun CheckoutScreen(
 
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = {
+                email = it
+                emailError = null
+            },
             label = {
                 Text("Email address")
             },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = emailError != null
         )
+
+        emailError?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -119,37 +144,73 @@ fun CheckoutScreen(
 
         OutlinedTextField(
             value = firstName,
-            onValueChange = { firstName = it },
+            onValueChange = {
+                firstName = it
+                firstNameError = null
+            },
             label = {
                 Text("First name")
             },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = firstNameError != null
         )
+
+        firstNameError?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = lastName,
-            onValueChange = { lastName = it },
+            onValueChange = {
+                lastName = it
+                lastNameError = null
+            },
             label = {
                 Text("Last name")
             },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = lastNameError != null
         )
+
+        lastNameError?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = address,
-            onValueChange = { address = it },
+            onValueChange = {
+                address = it
+                addressError = null
+            },
             label = {
                 Text("Address")
             },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = addressError != null
         )
+
+        addressError?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -167,37 +228,73 @@ fun CheckoutScreen(
 
         OutlinedTextField(
             value = city,
-            onValueChange = { city = it },
+            onValueChange = {
+                city = it
+                cityError = null
+            },
             label = {
                 Text("City")
             },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = cityError != null
         )
+
+        cityError?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = postalCode,
-            onValueChange = { postalCode = it },
+            onValueChange = {
+                postalCode = it
+                postalCodeError = null
+            },
             label = {
                 Text("Postal code")
             },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = postalCodeError != null
         )
+
+        postalCodeError?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = phone,
-            onValueChange = { phone = it },
+            onValueChange = {
+                phone = it
+                phoneError = null
+            },
             label = {
                 Text("Phone (optional)")
             },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = phoneError != null
         )
+
+        phoneError?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
@@ -393,7 +490,53 @@ fun CheckoutScreen(
 
         Button(
             onClick = {
-                // TODO
+                emailError = null
+                firstNameError = null
+                lastNameError = null
+                addressError = null
+                cityError = null
+                postalCodeError = null
+
+                var isValid = true
+
+                if (!isValidEmail(email)) {
+                    emailError = "Enter a valid email address"
+                    isValid = false
+                }
+
+                if (!isValidName(firstName)) {
+                    firstNameError = "Enter a valid first name"
+                    isValid = false
+                }
+
+                if (!isValidName(lastName)) {
+                    lastNameError = "Enter a valid last name"
+                    isValid = false
+                }
+
+                if (!isValidAddress(address)) {
+                    addressError = "Enter a valid address"
+                    isValid = false
+                }
+
+                if (!isValidCity(city)) {
+                    cityError = "Enter a valid city"
+                    isValid = false
+                }
+
+                if (!isValidPostalCode(postalCode)) {
+                    postalCodeError = "Enter a valid 5-digit postal code"
+                    isValid = false
+                }
+
+                if (phone.isNotBlank() && !isValidPhone(phone)) {
+                    phoneError = "Enter a valid phone number"
+                    isValid = false
+                }
+
+                if (isValid) {
+                    // TODO
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
