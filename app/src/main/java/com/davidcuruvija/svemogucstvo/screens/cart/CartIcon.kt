@@ -1,7 +1,7 @@
 package com.davidcuruvija.svemogucstvo.screens.cart
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
@@ -22,7 +22,7 @@ fun CartIcon(itemCount: Int, onClick: () -> Unit) {
     ) {
         IconButton(onClick = onClick) {
             Icon(
-                imageVector = Icons.Default.ShoppingCart,
+                imageVector = Icons.Default.ShoppingBag,
                 contentDescription = "Cart"
             )
         }

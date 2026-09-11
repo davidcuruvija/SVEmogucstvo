@@ -14,6 +14,7 @@ import com.davidcuruvija.svemogucstvo.screens.ShopScreen
 import com.davidcuruvija.svemogucstvo.screens.checkout.CheckoutScreen
 import com.davidcuruvija.svemogucstvo.screens.checkout.OrderConfirmationScreen
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
+import com.davidcuruvija.svemogucstvo.ui.theme.SVEmogucstvoTheme
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            SVEmogucstvoTheme {
             val cartViewModel: CartViewModel = viewModel()
             val navController = rememberNavController()
             NavHost(
@@ -96,6 +98,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+            }
             }
         }
     }
