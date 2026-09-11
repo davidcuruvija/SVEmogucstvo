@@ -7,6 +7,7 @@ data class ProductDto(
     val regular_price : String,
     val sale_price : String,
     val on_sale : Boolean,
+    val featured : Boolean,
     val type : String,
     val description : String,
     val short_description : String,

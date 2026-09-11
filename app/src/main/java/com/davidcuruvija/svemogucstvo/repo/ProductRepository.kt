@@ -10,6 +10,10 @@ class ProductRepository @Inject constructor(private val api : WooCommerceApi) {
         return api.getProducts()
     }
 
+    suspend fun getFeaturedProducts() : List<ProductDto> {
+        return api.getFeaturedProducts()
+    }
+
     suspend fun getProductVariations(productId : Int) : List<ProductVariationDto> {
         return api.getProductVariations(productId)
     }

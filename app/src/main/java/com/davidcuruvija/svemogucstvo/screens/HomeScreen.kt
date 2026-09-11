@@ -1,6 +1,5 @@
 package com.davidcuruvija.svemogucstvo.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -31,26 +29,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.davidcuruvija.svemogucstvo.R
 import com.davidcuruvija.svemogucstvo.screens.common.BrandFooter
 import com.davidcuruvija.svemogucstvo.screens.common.BrandTopBar
 import com.davidcuruvija.svemogucstvo.ui.theme.Black
 import com.davidcuruvija.svemogucstvo.ui.theme.White
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
+import com.davidcuruvija.svemogucstvo.viewmodel.home.HomeUiState
+import com.davidcuruvija.svemogucstvo.viewmodel.home.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onShopClick: () -> Unit,
     onCartClick: () -> Unit,
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val itemCount by cartViewModel.itemCount.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Images come from products marked "Featured" in WooCommerce, so the store
+    // owner can rotate the drop shown here without an app update. Falls back to
+    // the bundled campaign photos until any product is marked Featured.
+    val featuredImages = (uiState as? HomeUiState.Success)
+        ?.featuredProducts
+        ?.mapNotNull { it.images.firstOrNull()?.src }
+        ?: emptyList()
+
+    val heroImageModel: Any = featuredImages.firstOrNull() ?: R.drawable.home_hero
+    val galleryImageModels: List<Any> = featuredImages.ifEmpty {
+        listOf(R.drawable.home_gallery_1, R.drawable.home_gallery_2, R.drawable.home_gallery_3)
+    }
 
     Scaffold(
         topBar = {
@@ -65,7 +81,10 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
         ) {
-            HeroSection(onShopClick = onShopClick)
+            HeroSection(
+                imageModel = heroImageModel,
+                onShopClick = onShopClick
+            )
 
             Column(modifier = Modifier.padding(24.dp)) {
                 Text(
@@ -108,17 +127,12 @@ fun HomeScreen(
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                listOf(
-                    R.drawable.home_gallery_1,
-                    R.drawable.home_gallery_2,
-                    R.drawable.home_gallery_3
-                ).forEach { resId ->
-                    Image(
-                        painter = painterResource(resId),
+                galleryImageModels.forEach { model ->
+                    AsyncImage(
+                        model = model,
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(220.dp)
+                        modifier = Modifier.size(220.dp)
                     )
                 }
             }
@@ -131,10 +145,10 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HeroSection(onShopClick: () -> Unit) {
+private fun HeroSection(imageModel: Any, onShopClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
-        Image(
-            painter = painterResource(R.drawable.home_hero),
+        AsyncImage(
+            model = imageModel,
             contentDescription = "Echo Collection",
             contentScale = ContentScale.Crop,
             modifier = Modifier
