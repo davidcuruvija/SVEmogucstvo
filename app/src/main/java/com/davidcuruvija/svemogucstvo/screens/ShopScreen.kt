@@ -27,6 +27,7 @@ import com.davidcuruvija.svemogucstvo.viewmodel.product.ProductViewModel
 fun ShopScreen(
     onProductClick: (ProductDto) -> Unit,
     onCartClick: () -> Unit,
+    onMenuClick: () -> Unit = {},
     cartViewModel: CartViewModel,
     viewModel: ProductViewModel = hiltViewModel()
 ) {
@@ -43,7 +44,8 @@ fun ShopScreen(
                 topBar = {
                     BrandTopBar(
                         cartItemCount = itemCount,
-                        onCartClick = onCartClick
+                        onCartClick = onCartClick,
+                        onMenuClick = onMenuClick
                     )
                 }
             ) { innerPadding ->

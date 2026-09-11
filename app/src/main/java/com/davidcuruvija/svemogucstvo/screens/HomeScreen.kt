@@ -49,6 +49,7 @@ import com.davidcuruvija.svemogucstvo.viewmodel.home.HomeViewModel
 fun HomeScreen(
     onShopClick: () -> Unit,
     onCartClick: () -> Unit,
+    onMenuClick: () -> Unit = {},
     cartViewModel: CartViewModel,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -72,7 +73,8 @@ fun HomeScreen(
         topBar = {
             BrandTopBar(
                 cartItemCount = itemCount,
-                onCartClick = onCartClick
+                onCartClick = onCartClick,
+                onMenuClick = onMenuClick
             )
         }
     ) { innerPadding ->
