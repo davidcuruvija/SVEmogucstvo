@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.davidcuruvija.svemogucstvo.screens.cart.CartScreen
 import com.davidcuruvija.svemogucstvo.screens.product.ProductDetailsScreen
+import com.davidcuruvija.svemogucstvo.screens.HomeScreen
 import com.davidcuruvija.svemogucstvo.screens.ShopScreen
 import com.davidcuruvija.svemogucstvo.screens.checkout.CheckoutScreen
 import com.davidcuruvija.svemogucstvo.screens.checkout.OrderConfirmationScreen
@@ -30,8 +31,19 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(
                 navController = navController,
-                startDestination = "shop"
+                startDestination = "home"
             ) {
+                composable("home") {
+                    HomeScreen(
+                        onShopClick = {
+                            navController.navigate("shop")
+                        },
+                        onCartClick = {
+                            navController.navigate("cart")
+                        },
+                        cartViewModel = cartViewModel
+                    )
+                }
                 composable("shop") {
                     ShopScreen(
                         onProductClick = { product ->
