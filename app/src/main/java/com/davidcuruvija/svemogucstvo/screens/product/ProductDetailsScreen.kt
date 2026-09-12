@@ -29,7 +29,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import android.text.Html
 import android.widget.TextView
@@ -46,10 +45,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import com.davidcuruvija.svemogucstvo.model.cart.CartItem
+import com.davidcuruvija.svemogucstvo.screens.cart.CartIcon
+import com.davidcuruvija.svemogucstvo.screens.common.BrandBackTopBar
+import com.davidcuruvija.svemogucstvo.ui.theme.Divider
 import com.davidcuruvija.svemogucstvo.util.formatPrice
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
 
@@ -59,6 +62,8 @@ fun ProductDetailsScreen(
     productId : Int,
     cartViewModel : CartViewModel,
     onAddToCart: () -> Unit,
+    onBackClick: () -> Unit = {},
+    onCartClick: () -> Unit = {},
     viewModel : ProductDetailsViewModel = hiltViewModel()
 ) {
     var selectedColor by remember { mutableStateOf<String?>(null) }
@@ -71,10 +76,28 @@ fun ProductDetailsScreen(
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val itemCount by cartViewModel.itemCount.collectAsStateWithLifecycle()
 
+    Scaffold(
+        topBar = {
+            BrandBackTopBar(
+                title = (uiState as? ProductDetailsUiState.Success)?.product?.name?.uppercase() ?: "",
+                onBackClick = onBackClick,
+                actions = {
+                    CartIcon(
+                        itemCount = itemCount,
+                        onClick = onCartClick
+                    )
+                }
+            )
+        }
+    ) { innerPadding ->
     when (val state = uiState) {
         ProductDetailsUiState.Loading -> {
-            Text("Loading...")
+            Text(
+                text = "Loading...",
+                modifier = Modifier.padding(innerPadding)
+            )
         }
 
         is ProductDetailsUiState.Success -> {
@@ -127,6 +150,7 @@ fun ProductDetailsScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(innerPadding)
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp)
             ) {
@@ -216,7 +240,7 @@ fun ProductDetailsScreen(
                         Box(
                             modifier = Modifier
                                 .size(48.dp)
-                                .border(1.dp, Color.LightGray),
+                                .border(1.dp, Divider),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(quantity.toString())
@@ -375,8 +399,12 @@ fun ProductDetailsScreen(
         }
 
         is ProductDetailsUiState.Error -> {
-            Text("Error: ${state.message}")
+            Text(
+                text = "Error: ${state.message}",
+                modifier = Modifier.padding(innerPadding)
+            )
         }
+    }
     }
 }
 
@@ -420,8 +448,8 @@ fun ProductAttributeDropdown(
                     .menuAnchor()
                     .fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color.LightGray,
-                    unfocusedBorderColor = Color.LightGray
+                    focusedBorderColor = Divider,
+                    unfocusedBorderColor = Divider
                 )
             )
 

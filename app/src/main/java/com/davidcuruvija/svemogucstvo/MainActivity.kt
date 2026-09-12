@@ -128,7 +128,9 @@ class MainActivity : ComponentActivity() {
                         },
                         onCheckout = {
                             navController.navigate("checkout")
-                        }
+                        },
+                        onCartClick = {},
+                        onMenuClick = openDrawer
                     )
                 }
                 composable("checkout") {
@@ -170,6 +172,12 @@ class MainActivity : ComponentActivity() {
                             productId = productId,
                             cartViewModel = cartViewModel,
                             onAddToCart = {
+                                navController.navigate("cart")
+                            },
+                            onBackClick = {
+                                navController.popBackStack()
+                            },
+                            onCartClick = {
                                 navController.navigate("cart")
                             }
                         )

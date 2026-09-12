@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -28,23 +29,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.davidcuruvija.svemogucstvo.model.cart.CartItem
+import com.davidcuruvija.svemogucstvo.screens.common.BrandTopBar
+import com.davidcuruvija.svemogucstvo.ui.theme.Divider
 import com.davidcuruvija.svemogucstvo.util.formatPrice
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
     cartViewModel : CartViewModel,
     onContinueShopping : () -> Unit,
-    onCheckout : () -> Unit
+    onCheckout : () -> Unit,
+    onCartClick : () -> Unit = {},
+    onMenuClick : () -> Unit = {}
 ) {
     val items by cartViewModel.items.collectAsStateWithLifecycle()
+    val itemCount by cartViewModel.itemCount.collectAsStateWithLifecycle()
     val total by cartViewModel.total.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -55,6 +62,13 @@ fun CartScreen(
     }
 
     Scaffold(
+        topBar = {
+            BrandTopBar(
+                cartItemCount = itemCount,
+                onCartClick = onCartClick,
+                onMenuClick = onMenuClick
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
     Column(
@@ -85,7 +99,8 @@ fun CartScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = onContinueShopping
+                    onClick = onContinueShopping,
+                    shape = RectangleShape
                 ) {
                     Text("CONTINUE SHOPPING")
                 }
@@ -111,7 +126,8 @@ fun CartScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(
-                onClick = onCheckout
+                onClick = onCheckout,
+                shape = RectangleShape
             ) {
                 Text("CHECKOUT")
             }
@@ -167,6 +183,7 @@ private fun CartItemRow(
                 onClick = {
                     cartViewModel.decreaseQuantity(item.key)
                 },
+                shape = RectangleShape,
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier.size(48.dp)
             ) {
@@ -176,7 +193,7 @@ private fun CartItemRow(
             Box(
                 modifier = Modifier
                     .size(48.dp)
-                    .border(1.dp, Color.LightGray),
+                    .border(1.dp, Divider),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = item.quantity.toString())
@@ -186,6 +203,7 @@ private fun CartItemRow(
                 onClick = {
                     cartViewModel.increaseQuantity(item.key)
                 },
+                shape = RectangleShape,
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier.size(48.dp)
             ) {
