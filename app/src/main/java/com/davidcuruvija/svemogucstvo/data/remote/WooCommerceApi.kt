@@ -12,7 +12,8 @@ interface WooCommerceApi {
     suspend fun getProducts(
         @Query("category") category : Int? = null,
         @Query("orderby") orderBy : String? = null,
-        @Query("order") order : String? = null
+        @Query("order") order : String? = null,
+        @Query("search") search : String? = null
     ) : List<ProductDto>
 
     @GET("wp-json/wc/v3/products")

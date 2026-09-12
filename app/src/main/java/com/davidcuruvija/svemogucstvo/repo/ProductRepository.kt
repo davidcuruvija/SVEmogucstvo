@@ -10,12 +10,14 @@ class ProductRepository @Inject constructor(private val api : WooCommerceApi) {
     suspend fun getProducts(
         categoryId : Int? = null,
         orderBy : String? = null,
-        order : String? = null
+        order : String? = null,
+        search : String? = null
     ) : List<ProductDto> {
         return api.getProducts(
             category = categoryId,
             orderBy = orderBy,
-            order = order
+            order = order,
+            search = search
         )
     }
 

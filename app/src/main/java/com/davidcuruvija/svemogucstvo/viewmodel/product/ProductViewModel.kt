@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.davidcuruvija.svemogucstvo.model.product.ProductCategoryDto
 import com.davidcuruvija.svemogucstvo.repo.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +27,11 @@ class ProductViewModel @Inject constructor(private val repository: ProductReposi
 
     private val _selectedSort = MutableStateFlow(SortOption.DEFAULT)
     val selectedSort: StateFlow<SortOption> = _selectedSort.asStateFlow()
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private var searchDebounceJob: Job? = null
 
     init {
         loadCategories()
@@ -48,7 +55,8 @@ class ProductViewModel @Inject constructor(private val repository: ProductReposi
                 val products = repository.getProducts(
                     categoryId = _selectedCategoryId.value,
                     orderBy = _selectedSort.value.orderBy,
-                    order = _selectedSort.value.order
+                    order = _selectedSort.value.order,
+                    search = _searchQuery.value.trim().ifBlank { null }
                 )
                 _uiState.value = ProductUiState.Success(products)
             } catch (e: Exception) {
@@ -67,5 +75,14 @@ class ProductViewModel @Inject constructor(private val repository: ProductReposi
     fun selectSort(sort: SortOption) {
         _selectedSort.value = sort
         getProducts()
+    }
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+        searchDebounceJob?.cancel()
+        searchDebounceJob = viewModelScope.launch {
+            delay(400)
+            getProducts()
+        }
     }
 }
