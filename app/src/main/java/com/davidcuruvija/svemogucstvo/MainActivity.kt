@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.davidcuruvija.svemogucstvo.screens.cart.CartScreen
 import com.davidcuruvija.svemogucstvo.screens.product.ProductDetailsScreen
+import com.davidcuruvija.svemogucstvo.screens.AboutScreen
 import com.davidcuruvija.svemogucstvo.screens.HomeScreen
 import com.davidcuruvija.svemogucstvo.screens.PlaceholderScreen
 import com.davidcuruvija.svemogucstvo.screens.ShopScreen
@@ -89,16 +90,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 composable("about") {
-                    PlaceholderScreen(
-                        title = "About",
-                        onCartClick = { navController.navigate("cart") },
-                        onMenuClick = openDrawer,
-                        cartViewModel = cartViewModel
-                    )
-                }
-                composable("studio") {
-                    PlaceholderScreen(
-                        title = "Studio",
+                    AboutScreen(
                         onCartClick = { navController.navigate("cart") },
                         onMenuClick = openDrawer,
                         cartViewModel = cartViewModel
