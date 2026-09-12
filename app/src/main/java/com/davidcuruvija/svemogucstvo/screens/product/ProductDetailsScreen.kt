@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.davidcuruvija.svemogucstvo.viewmodel.product.ProductDetailsUiState
 import com.davidcuruvija.svemogucstvo.viewmodel.product.ProductDetailsViewModel
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,6 +50,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import com.davidcuruvija.svemogucstvo.model.cart.CartItem
 import com.davidcuruvija.svemogucstvo.screens.cart.CartIcon
+import com.davidcuruvija.svemogucstvo.screens.common.BrandAsyncImage
 import com.davidcuruvija.svemogucstvo.screens.common.BrandBackTopBar
 import com.davidcuruvija.svemogucstvo.ui.theme.Divider
 import com.davidcuruvija.svemogucstvo.util.formatPrice
@@ -154,7 +154,7 @@ fun ProductDetailsScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp)
             ) {
-                AsyncImage(
+                BrandAsyncImage(
                     model = state.product.images.firstOrNull()?.src,
                     contentDescription = state.product.name,
                     modifier = Modifier

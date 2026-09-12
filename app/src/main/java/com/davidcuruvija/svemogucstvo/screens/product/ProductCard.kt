@@ -19,11 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.davidcuruvija.svemogucstvo.model.product.ProductDto
+import com.davidcuruvija.svemogucstvo.screens.common.BrandAsyncImage
 import com.davidcuruvija.svemogucstvo.ui.theme.Black
 import com.davidcuruvija.svemogucstvo.ui.theme.White
 import com.davidcuruvija.svemogucstvo.util.formatPrice
@@ -37,13 +36,12 @@ fun ProductCard(product : ProductDto, onClick : () -> Unit) {
             .padding(8.dp)
     ) {
         Box {
-            AsyncImage(
+            BrandAsyncImage(
                 model = product.images.firstOrNull()?.src,
                 contentDescription = product.name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(3f / 4f),
-                contentScale = ContentScale.Crop
+                    .aspectRatio(3f / 4f)
             )
 
             if (product.on_sale) {

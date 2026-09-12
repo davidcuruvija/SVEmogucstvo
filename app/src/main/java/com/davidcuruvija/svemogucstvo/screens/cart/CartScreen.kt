@@ -34,8 +34,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.davidcuruvija.svemogucstvo.model.cart.CartItem
+import com.davidcuruvija.svemogucstvo.screens.common.BrandAsyncImage
 import com.davidcuruvija.svemogucstvo.screens.common.BrandTopBar
 import com.davidcuruvija.svemogucstvo.ui.theme.Divider
 import com.davidcuruvija.svemogucstvo.util.formatPrice
@@ -154,7 +154,7 @@ private fun CartItemRow(
             .fillMaxWidth()
             .padding(bottom = 24.dp)
     ) {
-        AsyncImage(
+        BrandAsyncImage(
             model = item.imageUrl,
             contentDescription = item.productName,
             modifier = Modifier

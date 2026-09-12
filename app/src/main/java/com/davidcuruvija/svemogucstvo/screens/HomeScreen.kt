@@ -28,14 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.davidcuruvija.svemogucstvo.R
+import com.davidcuruvija.svemogucstvo.screens.common.BrandAsyncImage
 import com.davidcuruvija.svemogucstvo.screens.common.BrandFooter
 import com.davidcuruvija.svemogucstvo.screens.common.BrandTopBar
 import com.davidcuruvija.svemogucstvo.ui.theme.Black
@@ -130,10 +129,9 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 galleryImageModels.forEach { model ->
-                    AsyncImage(
+                    BrandAsyncImage(
                         model = model,
                         contentDescription = null,
-                        contentScale = ContentScale.Crop,
                         modifier = Modifier.size(220.dp)
                     )
                 }
@@ -149,10 +147,9 @@ fun HomeScreen(
 @Composable
 private fun HeroSection(imageModel: Any, onShopClick: () -> Unit) {
     Box(modifier = Modifier.fillMaxWidth()) {
-        AsyncImage(
+        BrandAsyncImage(
             model = imageModel,
             contentDescription = "Echo Collection",
-            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(3f / 4f)
