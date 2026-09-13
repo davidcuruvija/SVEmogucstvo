@@ -2,4 +2,10 @@
 <resources>
 
     <style name="Theme.SVEmogucstvo" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.SVEmogucstvo.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground_art</item>
+        <item name="postSplashScreenTheme">@style/Theme.SVEmogucstvo</item>
+    </style>
 </resources>
