@@ -13,9 +13,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.davidcuruvija.svemogucstvo.screens.cart.CartScreen
 import com.davidcuruvija.svemogucstvo.screens.product.ProductDetailsScreen
+import com.davidcuruvija.svemogucstvo.screens.GalleryScreen
 import com.davidcuruvija.svemogucstvo.screens.HomeScreen
 import com.davidcuruvija.svemogucstvo.screens.PageScreen
-import com.davidcuruvija.svemogucstvo.screens.PlaceholderScreen
 import com.davidcuruvija.svemogucstvo.screens.ShopScreen
 import com.davidcuruvija.svemogucstvo.screens.checkout.CheckoutScreen
 import com.davidcuruvija.svemogucstvo.screens.checkout.OrderConfirmationScreen
@@ -97,9 +97,8 @@ class MainActivity : ComponentActivity() {
                         cartViewModel = cartViewModel
                     )
                 }
-                composable("blog") {
-                    PlaceholderScreen(
-                        title = "Blog",
+                composable("gallery") {
+                    GalleryScreen(
                         onCartClick = { navController.navigate("cart") },
                         onMenuClick = openDrawer,
                         cartViewModel = cartViewModel

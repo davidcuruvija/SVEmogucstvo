@@ -24,7 +24,7 @@ val drawerDestinations = listOf(
     DrawerDestination("HOME", "home"),
     DrawerDestination("SHOP", "shop"),
     DrawerDestination("ABOUT", "about"),
-    DrawerDestination("BLOG", "blog"),
+    DrawerDestination("GALLERY", "gallery"),
     DrawerDestination("CONTACT", "contact")
 )
 
