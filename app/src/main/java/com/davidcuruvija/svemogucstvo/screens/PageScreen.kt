@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -21,19 +22,28 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidcuruvija.svemogucstvo.screens.common.BrandFooter
 import com.davidcuruvija.svemogucstvo.screens.common.BrandTopBar
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
-import com.davidcuruvija.svemogucstvo.viewmodel.page.AboutUiState
-import com.davidcuruvija.svemogucstvo.viewmodel.page.AboutViewModel
+import com.davidcuruvija.svemogucstvo.viewmodel.page.PageUiState
+import com.davidcuruvija.svemogucstvo.viewmodel.page.PageViewModel
 
+// Renders any WordPress page's content fetched live via PageRepository - used for
+// About, Contact, and any future page whose copy is simple title+paragraph text
+// marked class="lead" in the page builder, so the app never needs its own copy of
+// content that already lives (and gets edited) on the website.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AboutScreen(
+fun PageScreen(
+    pageId: Int,
     onCartClick: () -> Unit,
     onMenuClick: () -> Unit = {},
     cartViewModel: CartViewModel,
-    viewModel: AboutViewModel = hiltViewModel()
+    viewModel: PageViewModel = hiltViewModel()
 ) {
     val itemCount by cartViewModel.itemCount.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(pageId) {
+        viewModel.loadPage(pageId)
+    }
 
     Scaffold(
         topBar = {
@@ -45,14 +55,14 @@ fun AboutScreen(
         }
     ) { innerPadding ->
         when (val state = uiState) {
-            AboutUiState.Loading -> {
+            PageUiState.Loading -> {
                 Text(
                     text = "Loading...",
                     modifier = Modifier.padding(innerPadding)
                 )
             }
 
-            is AboutUiState.Success -> {
+            is PageUiState.Success -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -86,7 +96,7 @@ fun AboutScreen(
                 }
             }
 
-            is AboutUiState.Error -> {
+            is PageUiState.Error -> {
                 Text(
                     text = "Error: ${state.message}",
                     modifier = Modifier.padding(innerPadding)

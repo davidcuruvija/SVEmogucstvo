@@ -2,14 +2,14 @@ package com.davidcuruvija.svemogucstvo.viewmodel.page
 
 import com.davidcuruvija.svemogucstvo.model.page.PageContent
 
-sealed interface AboutUiState {
-    data object Loading : AboutUiState
+sealed interface PageUiState {
+    data object Loading : PageUiState
 
     data class Success(
         val content : PageContent
-    ) : AboutUiState
+    ) : PageUiState
 
     data class Error(
         val message : String
-    ) : AboutUiState
+    ) : PageUiState
 }
