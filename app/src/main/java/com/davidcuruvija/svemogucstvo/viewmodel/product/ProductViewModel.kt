@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(private val repository: ProductRepository) : ViewModel() {
@@ -81,7 +82,7 @@ class ProductViewModel @Inject constructor(private val repository: ProductReposi
         _searchQuery.value = query
         searchDebounceJob?.cancel()
         searchDebounceJob = viewModelScope.launch {
-            delay(400)
+            delay(400.milliseconds)
             getProducts()
         }
     }

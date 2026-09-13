@@ -46,6 +46,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import com.davidcuruvija.svemogucstvo.model.cart.CartItem
@@ -68,8 +69,8 @@ fun ProductDetailsScreen(
 ) {
     var selectedColor by remember { mutableStateOf<String?>(null) }
     var selectedSize by remember { mutableStateOf<String?>(null) }
-    var quantity by remember { mutableStateOf(1) }
-    var selectedTab by remember { mutableStateOf(0) }
+    var quantity by remember { mutableIntStateOf(1) }
+    var selectedTab by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(productId) {
         viewModel.loadProduct(productId)
@@ -375,9 +376,7 @@ fun ProductDetailsScreen(
                                     )
 
                                     Text(
-                                        text = attribute.options
-                                            .map { it.trim('"') }
-                                            .joinToString(", "),
+                                        text = attribute.options.joinToString(", ") { it.trim('"') },
                                         modifier = Modifier.weight(0.7f)
                                     )
                                 }

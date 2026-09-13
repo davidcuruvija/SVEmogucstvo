@@ -21,6 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 sealed interface CheckoutState {
     data object Idle : CheckoutState
@@ -142,7 +143,7 @@ class CartViewModel @Inject constructor(private val cartRepository : CartReposit
 
         quantityUpdateJobs[key]?.cancel()
         quantityUpdateJobs[key] = viewModelScope.launch {
-            delay(400)
+            delay(400.milliseconds)
 
             val latestQuantity = _items.value.find { it.key == key }?.quantity
             val fallback = confirmedItemsBeforeUpdate.remove(key) ?: _items.value

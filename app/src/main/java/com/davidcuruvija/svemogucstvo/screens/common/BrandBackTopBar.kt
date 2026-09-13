@@ -14,6 +14,7 @@ import com.davidcuruvija.svemogucstvo.ui.theme.Black
 import com.davidcuruvija.svemogucstvo.ui.theme.White
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.graphics.Color
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,10 +42,11 @@ fun BrandBackTopBar(
             )
         },
         actions = actions,
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Black,
-            titleContentColor = White,
+            scrolledContainerColor = Color.Unspecified,
             navigationIconContentColor = White,
+            titleContentColor = White,
             actionIconContentColor = White
         )
     )
