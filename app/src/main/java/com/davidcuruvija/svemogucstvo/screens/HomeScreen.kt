@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -23,9 +26,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +47,10 @@ import com.davidcuruvija.svemogucstvo.ui.theme.White
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
 import com.davidcuruvija.svemogucstvo.viewmodel.home.HomeUiState
 import com.davidcuruvija.svemogucstvo.viewmodel.home.HomeViewModel
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
+
+private const val HERO_ROTATION_INTERVAL_MS = 4_500L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +72,14 @@ fun HomeScreen(
         ?.mapNotNull { it.images.firstOrNull()?.src }
         ?: emptyList()
 
-    val heroImageModel: Any = featuredImages.firstOrNull() ?: R.drawable.home_hero
+    val heroImages: List<Any> = featuredImages.ifEmpty {
+        listOf(
+            R.drawable.home_hero,
+            R.drawable.home_gallery_1,
+            R.drawable.home_gallery_2,
+            R.drawable.home_gallery_3
+        )
+    }
     val galleryImageModels: List<Any> = featuredImages.ifEmpty {
         listOf(R.drawable.home_gallery_1, R.drawable.home_gallery_2, R.drawable.home_gallery_3)
     }
@@ -83,7 +99,7 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             HeroSection(
-                imageModel = heroImageModel,
+                images = heroImages,
                 onShopClick = onShopClick
             )
 
@@ -145,15 +161,31 @@ fun HomeScreen(
 }
 
 @Composable
-private fun HeroSection(imageModel: Any, onShopClick: () -> Unit) {
+private fun HeroSection(images: List<Any>, onShopClick: () -> Unit) {
+    val pagerState = rememberPagerState(pageCount = { images.size })
+
+    LaunchedEffect(pagerState, images.size) {
+        if (images.size <= 1) return@LaunchedEffect
+        while (true) {
+            delay(HERO_ROTATION_INTERVAL_MS.milliseconds)
+            val nextPage = (pagerState.currentPage + 1) % images.size
+            pagerState.animateScrollToPage(nextPage)
+        }
+    }
+
     Box(modifier = Modifier.fillMaxWidth()) {
-        BrandAsyncImage(
-            model = imageModel,
-            contentDescription = "Echo Collection",
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(3f / 4f)
-        )
+        ) { page ->
+            BrandAsyncImage(
+                model = images[page],
+                contentDescription = "Echo Collection",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
 
         Box(
             modifier = Modifier
@@ -201,6 +233,23 @@ private fun HeroSection(imageModel: Any, onShopClick: () -> Unit) {
                     text = "SHOP NOW",
                     style = MaterialTheme.typography.labelLarge
                 )
+            }
+
+            if (images.size > 1) {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(horizontalArrangement = Arrangement.Center) {
+                    repeat(images.size) { index ->
+                        val selected = index == pagerState.currentPage
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 3.dp)
+                                .size(if (selected) 8.dp else 6.dp)
+                                .clip(CircleShape)
+                                .background(if (selected) White else White.copy(alpha = 0.4f))
+                        )
+                    }
+                }
             }
         }
     }
