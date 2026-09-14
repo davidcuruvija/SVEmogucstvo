@@ -14,9 +14,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.davidcuruvija.svemogucstvo.screens.cart.CartScreen
 import com.davidcuruvija.svemogucstvo.screens.product.ProductDetailsScreen
+import com.davidcuruvija.svemogucstvo.screens.AboutScreen
+import com.davidcuruvija.svemogucstvo.screens.ContactScreen
 import com.davidcuruvija.svemogucstvo.screens.GalleryScreen
 import com.davidcuruvija.svemogucstvo.screens.HomeScreen
-import com.davidcuruvija.svemogucstvo.screens.PageScreen
 import com.davidcuruvija.svemogucstvo.screens.ShopScreen
 import com.davidcuruvija.svemogucstvo.screens.checkout.CheckoutScreen
 import com.davidcuruvija.svemogucstvo.screens.checkout.OrderConfirmationScreen
@@ -92,8 +93,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 composable("about") {
-                    PageScreen(
-                        pageId = 95,
+                    AboutScreen(
                         onCartClick = { navController.navigate("cart") },
                         onMenuClick = openDrawer,
                         cartViewModel = cartViewModel
@@ -107,8 +107,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 composable("contact") {
-                    PageScreen(
-                        pageId = 93,
+                    ContactScreen(
                         onCartClick = { navController.navigate("cart") },
                         onMenuClick = openDrawer,
                         cartViewModel = cartViewModel

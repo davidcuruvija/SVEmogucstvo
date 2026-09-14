@@ -69,7 +69,6 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-compose:3.6.2")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.6.2")
     implementation("androidx.navigation:navigation-compose:2.10.1")
-    implementation("org.jsoup:jsoup:1.23.2")
     implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.compose.material:material-icons-extended")
     implementation(platform(libs.androidx.compose.bom))

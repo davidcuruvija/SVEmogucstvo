@@ -3,7 +3,6 @@ package com.davidcuruvija.svemogucstvo.di
 import com.davidcuruvija.svemogucstvo.BuildConfig
 import com.davidcuruvija.svemogucstvo.data.remote.WooCommerceApi
 import com.davidcuruvija.svemogucstvo.data.remote.WooCommerceStoreApi
-import com.davidcuruvija.svemogucstvo.data.remote.WordPressApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,11 +38,6 @@ object NetworkModule {
         retrofit : Retrofit
     ) : WooCommerceStoreApi {
         return retrofit.create(WooCommerceStoreApi::class.java)
-    }
-    @Provides
-    @Singleton
-    fun provideWordPressApi(retrofit : Retrofit) : WordPressApi {
-        return retrofit.create(WordPressApi::class.java)
     }
     @Provides
     @Singleton
