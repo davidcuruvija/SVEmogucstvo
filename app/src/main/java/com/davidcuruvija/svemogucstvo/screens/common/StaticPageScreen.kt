@@ -46,30 +46,33 @@ fun StaticPageScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
         ) {
-            Column(modifier = Modifier.padding(24.dp)) {
-                Text(
-                    text = title.uppercase(),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                paragraphs.forEachIndexed { index, paragraph ->
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Column(modifier = Modifier.padding(24.dp)) {
                     Text(
-                        text = paragraph,
-                        style = MaterialTheme.typography.bodyMedium
+                        text = title.uppercase(),
+                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold
                     )
 
-                    if (index != paragraphs.lastIndex) {
-                        Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    paragraphs.forEachIndexed { index, paragraph ->
+                        Text(
+                            text = paragraph,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        if (index != paragraphs.lastIndex) {
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             BrandFooter()
         }
