@@ -49,10 +49,17 @@ import androidx.compose.material3.Tab
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.background
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import com.davidcuruvija.svemogucstvo.model.cart.CartItem
+import com.davidcuruvija.svemogucstvo.model.product.ProductImageDto
 import com.davidcuruvija.svemogucstvo.screens.cart.CartIcon
 import com.davidcuruvija.svemogucstvo.screens.common.BrandAsyncImage
 import com.davidcuruvija.svemogucstvo.screens.common.BrandBackTopBar
+import com.davidcuruvija.svemogucstvo.ui.theme.Black
 import com.davidcuruvija.svemogucstvo.ui.theme.Divider
 import com.davidcuruvija.svemogucstvo.util.formatPrice
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
@@ -155,13 +162,9 @@ fun ProductDetailsScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp)
             ) {
-                BrandAsyncImage(
-                    model = state.product.images.firstOrNull()?.src,
-                    contentDescription = state.product.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(400.dp),
-                    contentScale = ContentScale.Fit
+                ProductImagePager(
+                    images = state.product.images,
+                    contentDescription = state.product.name
                 )
                 Text(
                     text = state.product.name,
@@ -291,33 +294,6 @@ fun ProductDetailsScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                HorizontalDivider()
-
-                Text(
-                    text = "SKU: ${state.product.sku.ifEmpty { "N/A" }}",
-                    modifier = Modifier.padding(vertical = 12.dp)
-                )
-
-                HorizontalDivider()
-
-                Text(
-                    text = "Categories: ${
-                        state.product.categories.joinToString(", ") { it.name }
-                    }",
-                    modifier = Modifier.padding(vertical = 12.dp)
-                )
-
-                HorizontalDivider()
-
-                Text(
-                    text = "Tags: ${
-                        state.product.tags.joinToString(", ") { it.name }
-                    }",
-                    modifier = Modifier.padding(vertical = 12.dp)
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
                 PrimaryTabRow(
                     selectedTabIndex = selectedTab
                 ) {
@@ -385,14 +361,6 @@ fun ProductDetailsScreen(
                             }
                         }
                     }
-                }
-
-                HorizontalDivider()
-
-                selectedVariation?.let { variation ->
-                    Text(text = "Variation ID: ${variation.id}")
-                    Text(text = "Price: ${variation.price}")
-                    Text(text = "Stock: ${variation.stock_status}")
                 }
             }
         }
@@ -467,6 +435,61 @@ fun ProductAttributeDropdown(
                             onOptionSelected(option)
                             expanded = false
                         }
+                    )
+                }
+            }
+        }
+    }
+}
+@Composable
+private fun ProductImagePager(
+    images: List<ProductImageDto>,
+    contentDescription: String
+) {
+    if (images.isEmpty()) {
+        BrandAsyncImage(
+            model = null,
+            contentDescription = contentDescription,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(400.dp),
+            contentScale = ContentScale.Fit
+        )
+        return
+    }
+
+    val pagerState = rememberPagerState(pageCount = { images.size })
+
+    Column {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth()
+        ) { page ->
+            BrandAsyncImage(
+                model = images[page].src,
+                contentDescription = contentDescription,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(400.dp),
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        if (images.size > 1) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                repeat(images.size) { index ->
+                    val selected = index == pagerState.currentPage
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 3.dp)
+                            .size(if (selected) 8.dp else 6.dp)
+                            .clip(CircleShape)
+                            .background(if (selected) Black else Divider)
                     )
                 }
             }
