@@ -54,6 +54,12 @@ class CartViewModel @Inject constructor(private val cartRepository : CartReposit
                 _items.value = cartRepository.getCartItems()
             } catch (e: Exception) {
                 _items.value = emptyList()
+                Log.e(
+                    "CartViewModel",
+                    "Failed to load cart",
+                    e
+                )
+                _errorEvents.tryEmit(e.message ?: "Unable to load your cart")
             }
         }
     }
@@ -179,6 +185,12 @@ class CartViewModel @Inject constructor(private val cartRepository : CartReposit
                 _items.value = cart.items.map { it.toCartItem() }
             } catch (e : Exception) {
                 _items.value = currentItems
+                Log.e(
+                    "CartViewModel",
+                    "Failed to remove item $key from cart",
+                    e
+                )
+                _errorEvents.tryEmit(e.message ?: "Unable to remove item")
             }
         }
     }

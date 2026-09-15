@@ -1,5 +1,6 @@
 package com.davidcuruvija.svemogucstvo.viewmodel.product
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidcuruvija.svemogucstvo.model.product.ProductCategoryDto
@@ -45,6 +46,11 @@ class ProductViewModel @Inject constructor(private val repository: ProductReposi
                 _categories.value = repository.getCategories()
             } catch (e: Exception) {
                 _categories.value = emptyList()
+                Log.e(
+                    "ProductViewModel",
+                    "Failed to load categories",
+                    e
+                )
             }
         }
     }
