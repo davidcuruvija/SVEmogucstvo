@@ -29,6 +29,7 @@ fun StaticPageScreen(
     paragraphs: List<String>,
     onCartClick: () -> Unit,
     onMenuClick: () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
     cartViewModel: CartViewModel
 ) {
     val itemCount by cartViewModel.itemCount.collectAsStateWithLifecycle()
@@ -74,7 +75,7 @@ fun StaticPageScreen(
                 }
             }
 
-            BrandFooter()
+            BrandFooter(onNavigate = onNavigate)
         }
     }
 }

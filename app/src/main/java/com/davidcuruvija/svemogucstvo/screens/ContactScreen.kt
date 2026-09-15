@@ -8,6 +8,7 @@ import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
 fun ContactScreen(
     onCartClick: () -> Unit,
     onMenuClick: () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
     cartViewModel: CartViewModel
 ) {
     StaticPageScreen(
@@ -21,6 +22,7 @@ fun ContactScreen(
         ),
         onCartClick = onCartClick,
         onMenuClick = onMenuClick,
+        onNavigate = onNavigate,
         cartViewModel = cartViewModel
     )
 }

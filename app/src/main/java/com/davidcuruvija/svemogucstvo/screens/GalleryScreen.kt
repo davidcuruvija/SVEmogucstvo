@@ -199,6 +199,7 @@ val galleryCollections = listOf(
 fun GalleryScreen(
     onCartClick : () -> Unit,
     onMenuClick : () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
     cartViewModel : CartViewModel
 ) {
     val itemCount by cartViewModel.itemCount.collectAsStateWithLifecycle()
@@ -231,7 +232,7 @@ fun GalleryScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            BrandFooter()
+            BrandFooter(onNavigate = onNavigate)
         }
     }
 }

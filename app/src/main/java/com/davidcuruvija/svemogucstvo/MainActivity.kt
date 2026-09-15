@@ -47,8 +47,7 @@ class MainActivity : ComponentActivity() {
                 coroutineScope.launch { drawerState.open() }
             }
 
-            val navigateFromDrawer: (String) -> Unit = { route ->
-                coroutineScope.launch { drawerState.close() }
+            val navigateTo: (String) -> Unit = { route ->
                 navController.navigate(route) {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
@@ -56,6 +55,11 @@ class MainActivity : ComponentActivity() {
                     launchSingleTop = true
                     restoreState = true
                 }
+            }
+
+            val navigateFromDrawer: (String) -> Unit = { route ->
+                coroutineScope.launch { drawerState.close() }
+                navigateTo(route)
             }
 
             ModalNavigationDrawer(
@@ -77,6 +81,7 @@ class MainActivity : ComponentActivity() {
                             navController.navigate("cart")
                         },
                         onMenuClick = openDrawer,
+                        onNavigate = navigateTo,
                         cartViewModel = cartViewModel
                     )
                 }
@@ -89,6 +94,7 @@ class MainActivity : ComponentActivity() {
                             navController.navigate("cart")
                         },
                         onMenuClick = openDrawer,
+                        onNavigate = navigateTo,
                         cartViewModel = cartViewModel
                     )
                 }
@@ -96,6 +102,7 @@ class MainActivity : ComponentActivity() {
                     AboutScreen(
                         onCartClick = { navController.navigate("cart") },
                         onMenuClick = openDrawer,
+                        onNavigate = navigateTo,
                         cartViewModel = cartViewModel
                     )
                 }
@@ -103,6 +110,7 @@ class MainActivity : ComponentActivity() {
                     GalleryScreen(
                         onCartClick = { navController.navigate("cart") },
                         onMenuClick = openDrawer,
+                        onNavigate = navigateTo,
                         cartViewModel = cartViewModel
                     )
                 }
@@ -110,6 +118,7 @@ class MainActivity : ComponentActivity() {
                     ContactScreen(
                         onCartClick = { navController.navigate("cart") },
                         onMenuClick = openDrawer,
+                        onNavigate = navigateTo,
                         cartViewModel = cartViewModel
                     )
                 }

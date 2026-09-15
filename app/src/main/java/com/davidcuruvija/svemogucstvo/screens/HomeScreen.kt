@@ -58,6 +58,7 @@ fun HomeScreen(
     onShopClick: () -> Unit,
     onCartClick: () -> Unit,
     onMenuClick: () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
     cartViewModel: CartViewModel,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -155,7 +156,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            BrandFooter()
+            BrandFooter(onNavigate = onNavigate)
         }
     }
 }

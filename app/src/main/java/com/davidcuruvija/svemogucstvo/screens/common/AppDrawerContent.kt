@@ -1,8 +1,5 @@
 package com.davidcuruvija.svemogucstvo.screens.common
 
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.davidcuruvija.svemogucstvo.ui.theme.AshGray
 import com.davidcuruvija.svemogucstvo.ui.theme.Black
 import com.davidcuruvija.svemogucstvo.ui.theme.White
-import androidx.core.net.toUri
 
 data class DrawerDestination(val label: String, val route: String)
 
@@ -32,9 +28,6 @@ val drawerDestinations = listOf(
     DrawerDestination("GALLERY", "gallery"),
     DrawerDestination("CONTACT", "contact")
 )
-
-private const val INSTAGRAM_USERNAME = "sve.mogucstvo"
-private const val WEBSITE_URL = "https://svemogucstvo.com"
 
 @Composable
 fun AppDrawerContent(onNavigate: (String) -> Unit) {
@@ -90,23 +83,4 @@ fun AppDrawerContent(onNavigate: (String) -> Unit) {
             modifier = Modifier.padding(horizontal = 24.dp)
         )
     }
-}
-
-private fun openInstagramProfile(context: Context, username: String) {
-    val appIntent = Intent(
-        Intent.ACTION_VIEW,
-        "http://instagram.com/_u/$username".toUri()
-    ).apply {
-        setPackage("com.instagram.android")
-    }
-
-    try {
-        context.startActivity(appIntent)
-    } catch (e: ActivityNotFoundException) {
-        openUrl(context, "https://instagram.com/$username")
-    }
-}
-
-private fun openUrl(context: Context, url: String) {
-    context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
 }

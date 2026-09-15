@@ -55,6 +55,7 @@ fun ShopScreen(
     onProductClick: (ProductDto) -> Unit,
     onCartClick: () -> Unit,
     onMenuClick: () -> Unit = {},
+    onNavigate: (String) -> Unit = {},
     cartViewModel: CartViewModel,
     viewModel: ProductViewModel = hiltViewModel()
 ) {
@@ -118,7 +119,7 @@ fun ShopScreen(
                         }
 
                         item(span = { GridItemSpan(maxLineSpan) }) {
-                            BrandFooter()
+                            BrandFooter(onNavigate = onNavigate)
                         }
                     }
                 }
