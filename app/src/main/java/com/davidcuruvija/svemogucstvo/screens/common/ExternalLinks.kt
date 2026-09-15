@@ -28,3 +28,7 @@ fun openInstagramProfile(context: Context, username: String) {
 fun openUrl(context: Context, url: String) {
     context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
 }
+
+fun openEmail(context: Context, email: String) {
+    context.startActivity(Intent(Intent.ACTION_SENDTO, "mailto:$email".toUri()))
+}

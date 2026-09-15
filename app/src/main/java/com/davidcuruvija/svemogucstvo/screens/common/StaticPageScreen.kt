@@ -30,7 +30,8 @@ fun StaticPageScreen(
     onCartClick: () -> Unit,
     onMenuClick: () -> Unit = {},
     onNavigate: (String) -> Unit = {},
-    cartViewModel: CartViewModel
+    cartViewModel: CartViewModel,
+    content: @Composable () -> Unit = {}
 ) {
     val itemCount by cartViewModel.itemCount.collectAsStateWithLifecycle()
 
@@ -72,6 +73,10 @@ fun StaticPageScreen(
                             Spacer(modifier = Modifier.height(20.dp))
                         }
                     }
+
+                    Spacer(modifier = Modifier.height(28.dp))
+
+                    content()
                 }
             }
 
