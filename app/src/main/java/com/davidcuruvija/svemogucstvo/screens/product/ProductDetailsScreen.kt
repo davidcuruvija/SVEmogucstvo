@@ -49,6 +49,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -112,7 +113,7 @@ fun ProductDetailsScreen(
             val colors = state.variations
                 .flatMap { variation ->
                     variation.attributes
-                        .filter { it.name == "color" }
+                        .filter { it.name.equals("color", ignoreCase = true) }
                         .map { it.option.trim('"') }
                 }
                 .distinct()
@@ -120,10 +121,22 @@ fun ProductDetailsScreen(
             val sizes = state.variations
                 .flatMap { variation ->
                     variation.attributes
-                        .filter { it.name == "size" }
+                        .filter { it.name.equals("size", ignoreCase = true) }
                         .map { it.option.trim('"') }
                 }
                 .distinct()
+
+            LaunchedEffect(colors) {
+                if (colors.size == 1 && selectedColor == null) {
+                    selectedColor = colors.first()
+                }
+            }
+
+            LaunchedEffect(sizes) {
+                if (sizes.size == 1 && selectedSize == null) {
+                    selectedSize = sizes.first()
+                }
+            }
 
             val selectedVariation = state.variations.firstOrNull { variation ->
 
@@ -175,14 +188,44 @@ fun ProductDetailsScreen(
                         bottom = 8.dp
                     )
                 )
-                Text(
-                    text = formatPrice(
-                        selectedVariation?.price ?: state.product.price
-                    ),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
+                val displayOnSale = selectedVariation?.on_sale ?: state.product.on_sale
+                val displayRegularPrice = selectedVariation
+                    ?.regular_price
+                    ?.takeIf { it.isNotBlank() }
+                    ?: state.product.regular_price
+                val displaySalePrice = selectedVariation
+                    ?.sale_price
+                    ?.takeIf { it.isNotBlank() }
+                    ?: state.product.sale_price
+                val displayPrice = selectedVariation?.price ?: state.product.price
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 16.dp)
-                )
+                ) {
+                    if (displayOnSale && displaySalePrice.isNotBlank()) {
+                        Text(
+                            text = formatPrice(displayRegularPrice),
+                            style = MaterialTheme.typography.bodyMedium,
+                            textDecoration = TextDecoration.LineThrough,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = formatPrice(displaySalePrice),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    } else {
+                        Text(
+                            text = formatPrice(displayPrice),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
                 AndroidView(
                     factory = { context ->
                         TextView(context)
@@ -198,25 +241,31 @@ fun ProductDetailsScreen(
                         .padding(bottom = 20.dp)
                 )
 
-                ProductAttributeDropdown(
-                    label = "Color",
-                    options = colors,
-                    selectedOption = selectedColor,
-                    onOptionSelected = {
-                        selectedColor = it
-                    }
-                )
+                if (colors.isNotEmpty()) {
+                    ProductAttributeDropdown(
+                        label = "Color",
+                        options = colors,
+                        selectedOption = selectedColor,
+                        onOptionSelected = {
+                            selectedColor = it
+                        }
+                    )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
 
-                ProductAttributeDropdown(
-                    label = "Size",
-                    options = sizes,
-                    selectedOption = selectedSize,
-                    onOptionSelected = {
-                        selectedSize = it
-                    }
-                )
+                if (sizes.isNotEmpty()) {
+                    ProductAttributeDropdown(
+                        label = "Size",
+                        options = sizes,
+                        selectedOption = selectedSize,
+                        onOptionSelected = {
+                            selectedSize = it
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -266,25 +315,42 @@ fun ProductDetailsScreen(
 
                     Button(
                         onClick = {
-                            selectedVariation?.let { variation ->
+                            if (state.variations.isEmpty()) {
                                 cartViewModel.addItem(
                                     CartItem(
                                         key = "",
-                                        variationId = variation.id,
+                                        variationId = state.product.id,
                                         productId = state.product.id,
                                         productName = state.product.name,
-                                        imageUrl = variation.image?.src
-                                            ?: state.product.images.firstOrNull()?.src,
-                                        color = selectedColor,
-                                        size = selectedSize,
-                                        price = variation.price,
+                                        imageUrl = state.product.images.firstOrNull()?.src,
+                                        color = null,
+                                        size = null,
+                                        price = state.product.price,
                                         quantity = quantity
                                     )
                                 )
                                 onAddToCart()
+                            } else {
+                                selectedVariation?.let { variation ->
+                                    cartViewModel.addItem(
+                                        CartItem(
+                                            key = "",
+                                            variationId = variation.id,
+                                            productId = state.product.id,
+                                            productName = state.product.name,
+                                            imageUrl = variation.image?.src
+                                                ?: state.product.images.firstOrNull()?.src,
+                                            color = selectedColor,
+                                            size = selectedSize,
+                                            price = variation.price,
+                                            quantity = quantity
+                                        )
+                                    )
+                                    onAddToCart()
+                                }
                             }
                         },
-                        enabled = selectedVariation != null,
+                        enabled = state.variations.isEmpty() || selectedVariation != null,
                         shape = RectangleShape,
                         modifier = Modifier.height(48.dp)
                     ) {
