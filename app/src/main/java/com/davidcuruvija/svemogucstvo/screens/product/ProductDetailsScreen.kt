@@ -62,7 +62,10 @@ import com.davidcuruvija.svemogucstvo.screens.common.BrandAsyncImage
 import com.davidcuruvija.svemogucstvo.screens.common.BrandBackTopBar
 import com.davidcuruvija.svemogucstvo.ui.theme.Black
 import com.davidcuruvija.svemogucstvo.ui.theme.Divider
+import com.davidcuruvija.svemogucstvo.util.extractAttributeOptions
+import com.davidcuruvija.svemogucstvo.util.findMatchingVariation
 import com.davidcuruvija.svemogucstvo.util.formatPrice
+import com.davidcuruvija.svemogucstvo.util.resolveDisplayPrice
 import com.davidcuruvija.svemogucstvo.viewmodel.cart.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,21 +113,8 @@ fun ProductDetailsScreen(
         }
 
         is ProductDetailsUiState.Success -> {
-            val colors = state.variations
-                .flatMap { variation ->
-                    variation.attributes
-                        .filter { it.name.equals("color", ignoreCase = true) }
-                        .map { it.option.trim('"') }
-                }
-                .distinct()
-
-            val sizes = state.variations
-                .flatMap { variation ->
-                    variation.attributes
-                        .filter { it.name.equals("size", ignoreCase = true) }
-                        .map { it.option.trim('"') }
-                }
-                .distinct()
+            val colors = extractAttributeOptions(state.variations, "color")
+            val sizes = extractAttributeOptions(state.variations, "size")
 
             LaunchedEffect(colors) {
                 if (colors.size == 1 && selectedColor == null) {
@@ -138,35 +128,11 @@ fun ProductDetailsScreen(
                 }
             }
 
-            val selectedVariation = state.variations.firstOrNull { variation ->
-
-                val variationColor = variation.attributes
-                    .firstOrNull {
-                        it.name.equals("color", ignoreCase = true)
-                    }
-                    ?.option
-                    ?.trim()
-                    ?.trim('"')
-
-                val variationSize = variation.attributes
-                    .firstOrNull {
-                        it.name.equals("size", ignoreCase = true)
-                    }
-                    ?.option
-                    ?.trim()
-                    ?.trim('"')
-
-                val cleanSelectedColor = selectedColor
-                    ?.trim()
-                    ?.trim('"')
-
-                val cleanSelectedSize = selectedSize
-                    ?.trim()
-                    ?.trim('"')
-
-                variationColor.equals(cleanSelectedColor, ignoreCase = true) &&
-                        variationSize.equals(cleanSelectedSize, ignoreCase = true)
-            }
+            val selectedVariation = findMatchingVariation(
+                variations = state.variations,
+                selectedColor = selectedColor,
+                selectedSize = selectedSize
+            )
 
             Column(
                 modifier = Modifier
@@ -188,24 +154,15 @@ fun ProductDetailsScreen(
                         bottom = 8.dp
                     )
                 )
-                val displayOnSale = selectedVariation?.on_sale ?: state.product.on_sale
-                val displayRegularPrice = selectedVariation
-                    ?.regular_price
-                    ?.takeIf { it.isNotBlank() }
-                    ?: state.product.regular_price
-                val displaySalePrice = selectedVariation
-                    ?.sale_price
-                    ?.takeIf { it.isNotBlank() }
-                    ?: state.product.sale_price
-                val displayPrice = selectedVariation?.price ?: state.product.price
+                val displayPrice = resolveDisplayPrice(state.product, selectedVariation)
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
-                    if (displayOnSale && displaySalePrice.isNotBlank()) {
+                    if (displayPrice.onSale && displayPrice.salePrice.isNotBlank()) {
                         Text(
-                            text = formatPrice(displayRegularPrice),
+                            text = formatPrice(displayPrice.regularPrice),
                             style = MaterialTheme.typography.bodyMedium,
                             textDecoration = TextDecoration.LineThrough,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -214,13 +171,13 @@ fun ProductDetailsScreen(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Text(
-                            text = formatPrice(displaySalePrice),
+                            text = formatPrice(displayPrice.salePrice),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.SemiBold
                         )
                     } else {
                         Text(
-                            text = formatPrice(displayPrice),
+                            text = formatPrice(displayPrice.price),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.SemiBold
                         )
