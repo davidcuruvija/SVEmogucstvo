@@ -35,7 +35,6 @@ fun BrandTopBar(
 ) {
     CenterAlignedTopAppBar(
         navigationIcon = {
-            // No drawer/menu destinations exist yet - placeholder to match the site's header.
             Row(
                 modifier = Modifier
                     .clickable(onClick = onMenuClick)
