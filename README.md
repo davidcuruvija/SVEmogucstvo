@@ -1,6 +1,6 @@
 # SVEmogućstvo
 
-Native Android app for [SVEmogućstvo](https://svemogucstvo.com) (brand mark "CBE"), a fashion label founded by Marina Ćuruvija. The app mirrors the store's website experience (browsing, cart, and checkout), backed by the same live WooCommerce store.
+Native Android app for [SVEmogućstvo](https://svemogucstvo.com), a fashion label founded by Marina Ćuruvija. The app mirrors the store's website experience (browsing, cart, and checkout), backed by the same live WooCommerce store.
 
 ## Features
 
