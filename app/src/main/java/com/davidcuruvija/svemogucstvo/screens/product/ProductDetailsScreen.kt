@@ -160,7 +160,7 @@ fun ProductDetailsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
-                    if (displayPrice.onSale && displayPrice.salePrice.isNotBlank()) {
+                    if (displayPrice.onSale && displayPrice.regularPrice.isNotBlank() && displayPrice.regularPrice != displayPrice.price) {
                         Text(
                             text = formatPrice(displayPrice.regularPrice),
                             style = MaterialTheme.typography.bodyMedium,
@@ -171,7 +171,7 @@ fun ProductDetailsScreen(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Text(
-                            text = formatPrice(displayPrice.salePrice),
+                            text = formatPrice(displayPrice.price),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.SemiBold
                         )

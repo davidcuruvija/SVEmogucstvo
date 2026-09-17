@@ -58,12 +58,28 @@ fun resolveDisplayPrice(
     product: ProductDto,
     selectedVariation: ProductVariationDto?
 ): ProductDisplayPrice {
+    val baseRegularPrice = selectedVariation?.regular_price?.takeIf { it.isNotBlank() }
+        ?: product.regular_price.takeIf { it.isNotBlank() }
+        ?: if (product.on_sale) extractRegularPriceFromHtml(product.price_html) else null
+
     return ProductDisplayPrice(
         onSale = selectedVariation?.on_sale ?: product.on_sale,
-        regularPrice = selectedVariation?.regular_price?.takeIf { it.isNotBlank() }
-            ?: product.regular_price,
+        regularPrice = baseRegularPrice ?: "",
         salePrice = selectedVariation?.sale_price?.takeIf { it.isNotBlank() }
             ?: product.sale_price,
         price = selectedVariation?.price ?: product.price
     )
+}
+
+fun extractRegularPriceFromHtml(priceHtml : String) : String? {
+    if (priceHtml.isBlank()) return null
+    val delRegex = """<del.*?>(.*?)<\/del>""".toRegex()
+    val match = delRegex.find(priceHtml)
+    if (match != null) {
+        val delContent = match.groupValues[1]
+        val numberRegex = """(\d+[\.,]?\d*)""".toRegex()
+        val numberMatch = numberRegex.find(delContent)
+        return numberMatch?.value?.replace(".", "")?.replace(",", "")
+    }
+    return null
 }

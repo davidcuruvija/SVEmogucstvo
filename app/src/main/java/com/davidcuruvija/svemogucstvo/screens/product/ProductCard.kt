@@ -26,9 +26,11 @@ import com.davidcuruvija.svemogucstvo.screens.common.BrandAsyncImage
 import com.davidcuruvija.svemogucstvo.ui.theme.Black
 import com.davidcuruvija.svemogucstvo.ui.theme.White
 import com.davidcuruvija.svemogucstvo.util.formatPrice
+import com.davidcuruvija.svemogucstvo.util.resolveDisplayPrice
 
 @Composable
 fun ProductCard(product : ProductDto, onClick : () -> Unit) {
+    val displayPrice = resolveDisplayPrice(product, null)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,7 +46,7 @@ fun ProductCard(product : ProductDto, onClick : () -> Unit) {
                     .aspectRatio(3f / 4f)
             )
 
-            if (product.on_sale) {
+            if (displayPrice.onSale) {
                 Text(
                     text = "SALE",
                     style = MaterialTheme.typography.labelSmall,
@@ -76,9 +78,9 @@ fun ProductCard(product : ProductDto, onClick : () -> Unit) {
         Spacer(modifier = Modifier.height(4.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (product.on_sale && product.sale_price.isNotBlank()) {
+            if (displayPrice.onSale && displayPrice.regularPrice.isNotBlank() && displayPrice.regularPrice != displayPrice.price) {
                 Text(
-                    text = formatPrice(product.regular_price),
+                    text = formatPrice(displayPrice.regularPrice),
                     style = MaterialTheme.typography.bodySmall,
                     textDecoration = TextDecoration.LineThrough,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -87,12 +89,12 @@ fun ProductCard(product : ProductDto, onClick : () -> Unit) {
                 Spacer(modifier = Modifier.width(6.dp))
 
                 Text(
-                    text = formatPrice(product.sale_price),
+                    text = formatPrice(displayPrice.price),
                     style = MaterialTheme.typography.bodyMedium
                 )
             } else {
                 Text(
-                    text = formatPrice(product.price),
+                    text = formatPrice(displayPrice.price),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

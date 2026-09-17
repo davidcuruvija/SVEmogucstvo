@@ -16,4 +16,5 @@ data class ProductDto(
     val tags : List<ProductTagDto>,
     val attributes : List<ProductAttributeDto>,
     val images : List<ProductImageDto>,
+    val price_html : String,
 )
